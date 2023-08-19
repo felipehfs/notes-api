@@ -1,0 +1,1 @@
+goose -dir db/migrations/  sqlite3 ./data.db  up
