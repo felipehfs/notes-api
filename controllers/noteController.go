@@ -22,6 +22,16 @@ func NewNoteController(repository repositories.NoteRepository) NoteController {
 	}
 }
 
+func (n NoteController) Delete(w http.ResponseWriter, r *http.Request) {
+	idParams := chi.URLParam(r, "id")
+	if err := n.Repository.Delete(idParams); err != nil {
+		sendError([]string{err.Error()}, http.StatusBadRequest, w)
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
+}
+
 func (n NoteController) Read(w http.ResponseWriter, r *http.Request) {
 	notes, err := n.Repository.Read()
 	if err != nil {
@@ -75,5 +85,6 @@ func (n NoteController) Routes() chi.Router {
 	r.Use(infra.JwtAuthenticate)
 	r.Post("/", n.Create)
 	r.Get("/", n.Read)
+	r.Delete("/{id}", n.Delete)
 	return r
 }

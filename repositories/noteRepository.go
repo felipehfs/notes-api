@@ -66,3 +66,17 @@ func (n *NoteRepository) Read() (notes []models.Note, err error) {
 
 	return
 }
+
+func (n *NoteRepository) Delete(id string) error {
+	tx, err := n.Db.Begin()
+	if err != nil {
+		return err
+	}
+
+	_, err = tx.Exec("DELETE FROM notes WHERE id=?", id)
+	if err != nil {
+		return err
+	}
+
+	return tx.Commit()
+}

@@ -68,5 +68,30 @@ func TestReadNotes(t *testing.T) {
 	if err != nil {
 		t.Errorf("an unexpected error occurred: %v", err)
 	}
+	if err = mock.ExpectationsWereMet(); err != nil {
+		t.Error(err)
+	}
+}
 
+func TestDeleteNotes(t *testing.T) {
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		t.Errorf("an error was not expected: %v", err)
+	}
+
+	id := "1"
+
+	repository := repositories.NewNoteRepository(db)
+	mock.ExpectBegin()
+	mock.ExpectExec("DELETE FROM notes").WithArgs(id).WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectCommit()
+
+	err = repository.Delete(id)
+	if err != nil {
+		t.Errorf("an error was not expected: %v", err)
+	}
+
+	if err = mock.ExpectationsWereMet(); err != nil {
+		t.Error(err)
+	}
 }

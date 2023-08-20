@@ -41,7 +41,7 @@ func JwtAuthenticate(next http.Handler) http.Handler {
 		}
 
 		headerPieces := strings.Split(authHeader, "Bearer ")
-		log.Printf("Login pieces %v", headerPieces)
+
 		if len(headerPieces) < 2 {
 			w.WriteHeader(http.StatusBadRequest)
 			json.NewEncoder(w).Encode(map[string][]string{
@@ -61,6 +61,7 @@ func JwtAuthenticate(next http.Handler) http.Handler {
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			json.NewEncoder(w).Encode(map[string][]string{"errors": {err.Error()}})
+			return
 		}
 
 		if token.Valid {
